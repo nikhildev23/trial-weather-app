@@ -5,6 +5,7 @@ var requests = require("requests");
 
 
 const homeFile = fs.readFileSync("index.html", "utf-8");
+const api_key= process.env.API_KEY;
 
 
 const replaceVal = (tempVal, orgVal) => {
@@ -21,17 +22,17 @@ const replaceVal = (tempVal, orgVal) => {
 const server = http.createServer((req, res) => {
   if (req.url == "/") {
     requests(
-      `https://api.openweathermap.org/data/2.5/weather?q=Pune&appid=625f460c6c4ce9194529f7c8389f4030`
+      `https://api.openweathermap.org/data/2.5/weather?q=Pune&appid=${api_key}`
     )
       .on("data", (chunk) => {
         const objdata = JSON.parse(chunk);
         const arrData = [objdata];
-        // console.log(arrData[0].main.temp);
+         console.log(arrData[0].main.temp);
         const realTimeData = arrData
           .map((val) => replaceVal(homeFile, val))
           .join("");
         res.write(realTimeData);
-        // console.log(realTimeData);
+         console.log(realTimeData);
       })
       .on("end", (err) => {
         if (err) return console.log("connection closed due to errors", err);
